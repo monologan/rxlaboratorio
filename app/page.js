@@ -27,9 +27,13 @@ const App = () => {
   const handleGeneratePDF = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:8000/api/pdf/${cedula}`);
-      // Aquí deberías implementar la lógica para descargar el PDF
-      window.open(`http://localhost:8000/downloads/${response.data.filename}`);
+      const response = await axios.get(`http://localhost:8000/api/pdf/${cedula}`, {
+        responseType: 'blob'
+      });
+      
+      // Crear URL del blob y descargar
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      saveAs(blob, `reporte_${cedula}.pdf`);
     } catch (err) {
       setError('Error al generar el PDF');
       console.error(err);
