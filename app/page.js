@@ -1,11 +1,12 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
-import axios from 'axios';
-import { saveAs } from 'file-saver';
+import React, { useState } from "react";
+import axios from "axios";
+import { saveAs } from "file-saver";
+import Image from "next/image";
 
 const App = () => {
-  const [cedula, setCedula] = useState('');
+  const [cedula, setCedula] = useState("");
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -14,10 +15,12 @@ const App = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`http://localhost:8000/api/records/${cedula}`);
+      const response = await axios.get(
+        `http://localhost:8000/api/records/${cedula}`
+      );
       setRecords(response.data.data);
     } catch (err) {
-      setError('Error al buscar los registros');
+      setError("Error al buscar los registros");
       console.error(err);
     } finally {
       setLoading(false);
@@ -27,15 +30,18 @@ const App = () => {
   const handleGeneratePDF = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:8000/api/pdf/${cedula}`, {
-        responseType: 'blob'
-      });
-      
+      const response = await axios.get(
+        `http://localhost:8000/api/pdf/${cedula}`,
+        {
+          responseType: "blob"
+        }
+      );
+
       // Crear URL del blob y descargar
-      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blob = new Blob([response.data], { type: "application/pdf" });
       saveAs(blob, `reporte_${cedula}.pdf`);
     } catch (err) {
-      setError('Error al generar el PDF');
+      setError("Error al generar el PDF");
       console.error(err);
     } finally {
       setLoading(false);
@@ -44,15 +50,18 @@ const App = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Consulta de Registros</h1>
       
-      <div className="mb-4">
-        <input
+
+
+      <div className="mb-4 flex flex-row justify-between  items-center">
+      <h1 className="text-2xl font-bold mb-4">Consulta de Registros</h1>
+        <div><input
           type="text"
           value={cedula}
           onChange={(e) => setCedula(e.target.value)}
           placeholder="Ingrese la cédula"
           className="p-2 border rounded"
+          
         />
         <button
           onClick={handleSearch}
@@ -61,6 +70,17 @@ const App = () => {
         >
           Buscar
         </button>
+        </div>
+        <div className="flex items-center justify-center mb-6">
+        <Image 
+          src="/logo.jpg" 
+          alt="Logo" 
+          width={380}
+          height={180}
+          className="object-contain"
+          priority
+        />
+      </div>
       </div>
 
       {error && <div className="text-red-500 mb-4">{error}</div>}
