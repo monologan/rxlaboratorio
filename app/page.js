@@ -11,6 +11,7 @@ const App = () => {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedRecords, setSelectedRecords] = useState([]);
 
   const handleSearch = async () => {
     try {
@@ -31,16 +32,27 @@ const App = () => {
   const handleGeneratePDF = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `http://localhost:8000/api/pdf/${cedula}`,
-        {
-          responseType: "blob"
+      const recordsToDownload = selectedRecords.length > 0 ? selectedRecords : records.map((_, index) => index);
+      
+      const response = await axios({
+        method: 'post',
+        url: `http://localhost:8000/api/pdf/${cedula}`,
+        data: { selectedIndices: recordsToDownload },
+        responseType: 'blob',
+        headers: {
+          'Content-Type': 'application/json',
         }
-      );
+      });
 
-      // Crear URL del blob y descargar
-      const blob = new Blob([response.data], { type: "application/pdf" });
-      saveAs(blob, `reporte_${cedula}.pdf`);
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `reporte_${cedula}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
     } catch (err) {
       setError("Error al generar el PDF");
       console.error(err);
@@ -49,15 +61,25 @@ const App = () => {
     }
   };
 
+  const handleCheckboxChange = (index) => {
+    setSelectedRecords(prev => {
+      if (prev.includes(index)) {
+        return prev.filter(i => i !== index);
+      } else {
+        return [...prev, index];
+      }
+    });
+  };
+
   return (
-    <div className="container h-screen mx-auto p-0 bg-fondo-blue grid grid-cols-2 gap-5 ">
+    <div className="container h-full mx-auto p-5  bg-fondo-blue grid grid-cols-2 gap-5 ">
       <div className="p-10 mx-0">
         <Image
           src="/loguito2.svg"
           alt="Logo"
           width={150}
           height={87}
-          className="object-contain"
+          className="object-contain mx-8"
           priority
         />
         <Image
@@ -65,7 +87,7 @@ const App = () => {
           alt="Logo"
           width={500}
           height={700}
-          className="object-contain justify-sel"
+          className="object-contain mx-[9rem] my-[2rem]"
           priority
         />
       </div>
@@ -82,14 +104,14 @@ const App = () => {
             type="text"
             value={cedula}
             onChange={(e) => setCedula(e.target.value)}
-            placeholder="Ingrese la cédula"
+            placeholder="ingrese su cedula"
             className="p-2 border rounded"
           />
           <input
             type="text"
             value={factura}
             onChange={(e) => setFactura(e.target.value)}
-            placeholder="Ingrese la factura"
+            placeholder="ingrese su factura"
             className="p-2 border rounded"
           />
 
@@ -118,17 +140,19 @@ const App = () => {
 
         {records.length > 0 && (
           <>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap w-[670px] gap-5 border-2 border-rose-500/40 rounded-lg p-2">
               <span className="font-bold">Factura: </span>
-                <p>{factura}</p>
+              <p>{factura}</p>
+
               <span className="font-bold">Documento de Identificacion: </span>
-                <p>{cedula}</p>
-              
+              <p>{cedula}</p>
+              <span className="font-bold">Nombre Paciente: </span>
+              <p>{records[0].Nombre}</p>
             </div>
 
-            <div className="mx-auto w-full max-w-2xl rounded-sm border border-gray-200 bg-white shadow-lg">
-              <header class="border-b border-gray-100 px-5 py-4">
-                <div class="font-semibold text-gray-800">
+            <div className="mx-0 w-full max-w-2xl rounded-sm border border-gray-200 bg-white shadow-lg">
+              <header className="border-b border-gray-100 px-5 py-4">
+                <div className="font-semibold text-gray-800">
                   Resultados Laboratorio
                 </div>
               </header>
@@ -137,21 +161,34 @@ const App = () => {
                 <table className="w-full table-auto">
                   <thead className="bg-gray-50 text-md font-semibold uppercase text-gray-400">
                     <tr>
-                      {Object.keys(records[0]).map((key) => (
-                        <th key={key} className="text-left font-semibold">
-                          {key}
-                        </th>
-                      ))}
+                      <th className="p-2">Seleccionar</th>
+                      {Object.keys(records[0])
+                        .filter(key => key !== 'Nombre')
+                        .map((key) => (
+                          <th key={key} className="text-left font-semibold">
+                            {key}
+                          </th>
+                        ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-sm">
                     {records.map((record, index) => (
                       <tr key={index}>
-                        {Object.values(record).map((value, i) => (
-                          <td key={i} className="p-2">
-                            {value}
-                          </td>
-                        ))}
+                        <td className="p-2">
+                          <input
+                            type="checkbox"
+                            checked={selectedRecords.includes(index)}
+                            onChange={() => handleCheckboxChange(index)}
+                            className="h-4 w-4"
+                          />
+                        </td>
+                        {Object.entries(record)
+                          .filter(([key]) => key !== 'Nombre')
+                          .map(([_, value], i) => (
+                            <td key={i} className="p-2">
+                              {value}
+                            </td>
+                          ))}
                       </tr>
                     ))}
                   </tbody>
