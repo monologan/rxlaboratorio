@@ -32,23 +32,26 @@ const App = () => {
   const handleGeneratePDF = async () => {
     try {
       setLoading(true);
-      const recordsToDownload = selectedRecords.length > 0 ? selectedRecords : records.map((_, index) => index);
-      
+      const recordsToDownload =
+        selectedRecords.length > 0
+          ? selectedRecords
+          : records.map((_, index) => index);
+
       const response = await axios({
-        method: 'post',
+        method: "post",
         url: `http://localhost:8000/api/pdf/${cedula}`,
         data: { selectedIndices: recordsToDownload },
-        responseType: 'blob',
+        responseType: "blob",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json"
         }
       });
 
-      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blob = new Blob([response.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.setAttribute('download', `reporte_${cedula}.pdf`);
+      link.setAttribute("download", `reporte_${cedula}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -62,9 +65,9 @@ const App = () => {
   };
 
   const handleCheckboxChange = (index) => {
-    setSelectedRecords(prev => {
+    setSelectedRecords((prev) => {
       if (prev.includes(index)) {
-        return prev.filter(i => i !== index);
+        return prev.filter((i) => i !== index);
       } else {
         return [...prev, index];
       }
@@ -143,7 +146,6 @@ const App = () => {
             <div className="flex flex-wrap w-[670px] gap-5 border-2 border-rose-500/40 rounded-lg p-2">
               <span className="font-bold">Factura: </span>
               <p>{factura}</p>
-
               <span className="font-bold">Documento de Identificacion: </span>
               <p>{cedula}</p>
               <span className="font-bold">Nombre Paciente: </span>
@@ -159,36 +161,35 @@ const App = () => {
 
               <div className="overflow-x-auto p-2">
                 <table className="w-full table-auto">
-                  <thead className="bg-gray-50 text-md font-semibold uppercase text-gray-400">
-                    <tr>
-                      <th className="p-2">Seleccionar</th>
-                      {Object.keys(records[0])
-                        .filter(key => key !== 'Nombre')
-                        .map((key) => (
+                  <thead className="bg-gray-50  text-md font-semibold uppercase text-gray-400">
+                    <tr>                      
+                      {Object.keys(records[0]).filter((key) => key !== "Nombre").map((key) => (
                           <th key={key} className="text-left font-semibold">
                             {key}
-                          </th>
+                          </th>                          
                         ))}
+                        <th className="p-1">✅</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-sm">
                     {records.map((record, index) => (
                       <tr key={index}>
-                        <td className="p-2">
-                          <input
-                            type="checkbox"
-                            checked={selectedRecords.includes(index)}
-                            onChange={() => handleCheckboxChange(index)}
-                            className="h-4 w-4"
-                          />
-                        </td>
+                        
                         {Object.entries(record)
-                          .filter(([key]) => key !== 'Nombre')
+                          .filter(([key]) => key !== "Nombre")
                           .map(([_, value], i) => (
                             <td key={i} className="p-2">
                               {value}
                             </td>
                           ))}
+                          <td className="p-2">
+                          <input
+                            type="checkbox"
+                            checked={selectedRecords.includes(index)}
+                            onChange={() => handleCheckboxChange(index)}
+                            className="h-4 w-4 p-2"
+                          />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
