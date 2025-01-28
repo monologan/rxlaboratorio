@@ -7,19 +7,37 @@ import Image from "next/image";
 
 const App = () => {
   const [cedula, setCedula] = useState("");
-  const [factura, setFactura] = useState("");
+  const [fechanacimiento, setfechanacimiento] = useState("");
+  const [tipocodigo, setTipocodigo] = useState("");
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedRecords, setSelectedRecords] = useState([]);
+  const [activeTab, setActiveTab] = useState('laboratorios');
+
+  const formatYear = (input) => {
+    // Remove any non-digit characters
+    const cleaned = input.replace(/\D/g, "");
+    // Only keep up to 4 digits
+    return cleaned.slice(0, 4);
+  };
+
+  const handleDateChange = (e) => {
+    const formatted = formatYear(e.target.value);
+    setfechanacimiento(formatted);
+  };
 
   const handleSearch = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(
-        `http://localhost:8000/api/records?cedula=${cedula}&factura=${factura}`
-      );
+      const response = await axios.get(`http://localhost:8000/api/records`, {
+        params: {
+          cedula: cedula || undefined,
+          fechanacimiento: fechanacimiento || undefined,
+          tipocodigo: tipocodigo || undefined
+        }
+      });
       setRecords(response.data.data);
     } catch (err) {
       setError("Error al buscar los registros");
@@ -95,33 +113,41 @@ const App = () => {
         />
       </div>
 
-      {/* div de 3 elementos titulo-inputs-logo hospital */}
+      {/* div de 4 elementos titulo-inputs-logo hospital */}
       <div className="flex flex-col  items-start gap-5 mt-6">
         <div>
           <h1 className="text-5xl font-bold texto-blue">
             Portal de Resultados
           </h1>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 w-[670px]">
+          <input
+            type="text"
+            value={tipocodigo}
+            onChange={(e) => setTipocodigo(e.target.value)}
+            placeholder="Tipo"
+            className="p-2 border rounded w-14"
+          />
           <input
             type="text"
             value={cedula}
             onChange={(e) => setCedula(e.target.value)}
             placeholder="ingrese su cedula"
-            className="p-2 border rounded"
+            className="p-2 border rounded w-64"
           />
           <input
             type="text"
-            value={factura}
-            onChange={(e) => setFactura(e.target.value)}
-            placeholder="ingrese su factura"
-            className="p-2 border rounded"
+            value={fechanacimiento}
+            onChange={handleDateChange}
+            placeholder="AAAA"
+            maxLength="4"
+            className="p-2 border rounded w-32 "
           />
 
           <button
             onClick={handleSearch}
             disabled={loading}
-            className="ml-2 bg-blue-500 text-white px-4 py-2 rounded"
+            className="ml-2 bg-blue-500 text-white px-4 py-2 rounded grow"
           >
             Buscar
           </button>
@@ -143,9 +169,82 @@ const App = () => {
 
         {records.length > 0 && (
           <>
+            <div className="w-[670px] border border-red-200 rounded-lg
+              
+            ">
+              <div className="border-b border-gray-200 ">
+                <nav className="flex justify-between" aria-label="Tabs">
+                  <button
+                    className={`px-4 py-2 text-sm font-medium ${
+                      activeTab === 'laboratorios'
+                        ? 'border-b-2 border-blue-500 text-blue-600'
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                    onClick={() => setActiveTab('laboratorios')}
+                  >
+                    Laboratorios
+                  </button>
+                  <button
+                    className={`px-4 py-2 text-sm font-medium ${
+                      activeTab === 'rx'
+                        ? 'border-b-2 border-blue-500 text-blue-600'
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                    onClick={() => setActiveTab('rx')}
+                  >
+                    RX
+                  </button>
+                  <button
+                    className={`px-4 py-2 text-sm font-medium ${
+                      activeTab === 'mamografias'
+                        ? 'border-b-2 border-blue-500 text-blue-600'
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                    onClick={() => setActiveTab('mamografias')}
+                  >
+                    Mamografías
+                  </button>
+                  <button
+                    className={`px-4 py-2 text-sm font-medium ${
+                      activeTab === 'ecografias'
+                        ? 'border-b-2 border-blue-500 text-blue-600'
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                    onClick={() => setActiveTab('ecografias')}
+                  >
+                    Ecografías
+                  </button>
+                </nav>
+              </div>
+
+              <div className="p-4">
+                {activeTab === 'laboratorios' && (
+                  <div>
+                    este es laboratorio
+                  </div>
+                )}
+                {activeTab === 'rx' && (
+                  <div>
+                    este es rx
+                  </div>
+                )}
+                {activeTab === 'mamografias' && (
+                  <div>
+                    este es mamografias
+                  </div>
+                )}
+                {activeTab === 'ecografias' && (
+                  <div>
+                    este es ecografias
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/*
             <div className="flex flex-wrap w-[670px] gap-5 border-2 border-rose-500/40 rounded-lg p-2">
-              <span className="font-bold">Factura: </span>
-              <p>{factura}</p>
+              <span className="font-bold">fechanacimiento: </span>
+              <p>{fechanacimiento}</p>
               <span className="font-bold">Documento de Identificacion: </span>
               <p>{cedula}</p>
               <span className="font-bold">Nombre Paciente: </span>
@@ -162,27 +261,41 @@ const App = () => {
               <div className="overflow-x-auto p-2">
                 <table className="w-full table-auto">
                   <thead className="bg-gray-50  text-md font-semibold uppercase text-gray-400">
-                    <tr>                      
-                      {Object.keys(records[0]).filter((key) => key !== "Nombre").map((key) => (
+                    <tr>
+                      {Object.keys(records[0])
+                        .slice(0, 3)
+                        .filter((key) => key !== "Nombre")
+                        .map((key) => (
                           <th key={key} className="text-left font-semibold">
                             {key}
-                          </th>                          
+                          </th>
                         ))}
-                        <th className="p-1">✅</th>
+                      <th className="p-1">✅</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-sm">
                     {records.map((record, index) => (
                       <tr key={index}>
-                        
                         {Object.entries(record)
+                          .reduce((acc, [key, value]) => {
+                            if (
+                              key === "nombreexamen" &&
+                              !acc.some(([k, v]) => k === key && v === value)
+                            ) {
+                              acc.push([key, value]);
+                            } else if (key !== "nombreexamen") {
+                              acc.push([key, value]);
+                            }
+                            return acc;
+                          }, [])
+                          .slice(0, 3)
                           .filter(([key]) => key !== "Nombre")
                           .map(([_, value], i) => (
                             <td key={i} className="p-2">
                               {value}
                             </td>
                           ))}
-                          <td className="p-2">
+                        <td className="p-2">
                           <input
                             type="checkbox"
                             checked={selectedRecords.includes(index)}
@@ -204,7 +317,7 @@ const App = () => {
                   Generar PDF
                 </button>
               </div>
-            </div>
+            </div>*/}
           </>
         )}
       </div>
