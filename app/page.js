@@ -4,16 +4,21 @@ import React, { useState } from "react";
 import axios from "axios";
 import { saveAs } from "file-saver";
 import Image from "next/image";
+import { BeakerIcon } from "@heroicons/react/24/solid";
+import { BoltIcon } from "@heroicons/react/24/solid";
+import { CircleStackIcon } from "@heroicons/react/24/solid";
+import { SignalIcon } from "@heroicons/react/24/solid";
 
 const App = () => {
   const [cedula, setCedula] = useState("");
   const [fechanacimiento, setfechanacimiento] = useState("");
   const [tipocodigo, setTipocodigo] = useState("");
   const [records, setRecords] = useState([]);
+  const [rxRecords, setRxRecords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedRecords, setSelectedRecords] = useState([]);
-  const [activeTab, setActiveTab] = useState('laboratorios');
+  const [activeTab, setActiveTab] = useState("laboratorios");
 
   const formatYear = (input) => {
     // Remove any non-digit characters
@@ -31,14 +36,29 @@ const App = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`http://localhost:8000/api/records`, {
+
+      // Fetch lab records
+      const labResponse = await axios.get(`http://localhost:8000/api/records`, {
         params: {
           cedula: cedula || undefined,
           fechanacimiento: fechanacimiento || undefined,
           tipocodigo: tipocodigo || undefined
         }
       });
-      setRecords(response.data.data);
+      setRecords(labResponse.data.data);
+
+      // Fetch RX records
+      const rxResponse = await axios.get(
+        `http://localhost:8000/api/rx-records`,
+        {
+          params: {
+            cedula: cedula || undefined,
+            fechanacimiento: fechanacimiento || undefined,
+            tipocodigo: tipocodigo || undefined
+          }
+        }
+      );
+      setRxRecords(rxResponse.data.data);
     } catch (err) {
       setError("Error al buscar los registros");
       console.error(err);
@@ -121,13 +141,16 @@ const App = () => {
           </h1>
         </div>
         <div className="flex flex-wrap gap-2 w-[670px]">
-          <input
-            type="text"
+          <select
             value={tipocodigo}
             onChange={(e) => setTipocodigo(e.target.value)}
-            placeholder="Tipo"
-            className="p-2 border rounded w-14"
-          />
+            className="p-2 border rounded w-14 bg-white"
+          >
+            <option value="">Tipo</option>
+            <option value="CC">CC</option>
+            <option value="TI">TI</option>
+            <option value="PA">PA</option>
+          </select>
           <input
             type="text"
             value={cedula}
@@ -169,89 +192,99 @@ const App = () => {
 
         {records.length > 0 && (
           <>
-            <div className="w-[670px] border border-red-200 rounded-lg
+            <div
+              className="w-[670px] border border-red-200 rounded-lg
               
-            ">
+            "
+            >
               <div className="border-b border-gray-200 ">
                 <nav className="flex justify-between" aria-label="Tabs">
                   <button
-                    className={`px-4 py-2 text-sm font-medium ${
-                      activeTab === 'laboratorios'
-                        ? 'border-b-2 border-blue-500 text-blue-600'
-                        : 'text-gray-500 hover:text-gray-700'
+                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
+                      activeTab === "laboratorios"
+                        ? "border-b-2 border-blue-500 text-blue-600"
+                        : "text-gray-500 hover:text-gray-700"
                     }`}
-                    onClick={() => setActiveTab('laboratorios')}
-                  >
-                    Laboratorios
+                    onClick={() => setActiveTab("laboratorios")}
+                  ><BoltIcon className="size-5"/>
+                    <span>Rayos X</span>
                   </button>
                   <button
-                    className={`px-4 py-2 text-sm font-medium ${
-                      activeTab === 'rx'
-                        ? 'border-b-2 border-blue-500 text-blue-600'
-                        : 'text-gray-500 hover:text-gray-700'
+                    className={`px-4 py-2 text-sm font-medium flex flex-row gap-2 ${
+                      activeTab === "rx"
+                        ? "border-b-2 border-blue-500 text-blue-600"
+                        : "text-gray-500 hover:text-gray-700"
                     }`}
-                    onClick={() => setActiveTab('rx')}
-                  >
-                    RX
+                    onClick={() => setActiveTab("rx")}
+                  ><BeakerIcon className="size-5"/>
+                    <span>Laboratorios</span>
+
                   </button>
                   <button
-                    className={`px-4 py-2 text-sm font-medium ${
-                      activeTab === 'mamografias'
-                        ? 'border-b-2 border-blue-500 text-blue-600'
-                        : 'text-gray-500 hover:text-gray-700'
+                    className={`px-4 py-2 text-sm font-medium flex flex-row gap-2 ${
+                      activeTab === "mamografias"
+                        ? "border-b-2 border-blue-500 text-blue-600"
+                        : "text-gray-500 hover:text-gray-700"
                     }`}
-                    onClick={() => setActiveTab('mamografias')}
-                  >
-                    Mamografías
+                    onClick={() => setActiveTab("mamografias")}
+                  ><CircleStackIcon className="size-5"/>
+                    <span>Mamografías</span>
                   </button>
                   <button
-                    className={`px-4 py-2 text-sm font-medium ${
-                      activeTab === 'ecografias'
-                        ? 'border-b-2 border-blue-500 text-blue-600'
-                        : 'text-gray-500 hover:text-gray-700'
+                    className={`px-4 py-2 text-sm font-medium flex flex-row gap-2 ${
+                      activeTab === "ecografias"
+                        ? "border-b-2 border-blue-500 text-blue-600"
+                        : "text-gray-500 hover:text-gray-700"
                     }`}
-                    onClick={() => setActiveTab('ecografias')}
-                  >
+                    onClick={() => setActiveTab("ecografias")}
+                  ><SignalIcon className="size-5"/>
                     Ecografías
                   </button>
                 </nav>
               </div>
 
               <div className="p-4">
-                {activeTab === 'laboratorios' && (
-                  <div>
-                    este es laboratorio
-                  </div>
+                {activeTab === "laboratorios" && <div>este es RX</div>}
+                {activeTab === "rx" && (
+                  <div className="overflow-x-auto">
+                    <table className="w-full table-auto">
+                      <thead className="bg-gray-50 text-md font-semibold uppercase text-gray-400 ">
+                        <tr>
+                          <th className="p-2 text-left">Fecha</th>
+                          <th className="p-2 text-left">Nombre de Examen</th>
+                          
+                          <th className="p-2 text-left">✅</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100 text-sm">
+                        {rxRecords.map((record, index) => (
+                          <tr key={index}>
+                            <td className="p-2">{record.Fecha}</td>
+                            <td className="p-2">{record.Descripcion}</td>
+                            
+                          </tr>
+                        ))}
+                        
+                        
+                      </tbody>
+                    </table>
+                    <div className="flex justify-end" >
+                    <button 
+                              onClick={handleGeneratePDF}
+                              disabled={loading}
+                              className="w-sm mt-4 bg-green-500 text-white px-4 py-2 rounded"
+                            >
+                              Generar PDF
+                            </button>
+                  </div></div>
                 )}
-                {activeTab === 'rx' && (
-                  <div>
-                    este es rx
-                  </div>
-                )}
-                {activeTab === 'mamografias' && (
-                  <div>
-                    este es mamografias
-                  </div>
-                )}
-                {activeTab === 'ecografias' && (
-                  <div>
-                    este es ecografias
-                  </div>
-                )}
+                {activeTab === "mamografias" && <div>este es mamografias</div>}
+                {activeTab === "ecografias" && <div>este es ecografias</div>}
               </div>
             </div>
 
-            {/*
-            <div className="flex flex-wrap w-[670px] gap-5 border-2 border-rose-500/40 rounded-lg p-2">
-              <span className="font-bold">fechanacimiento: </span>
-              <p>{fechanacimiento}</p>
-              <span className="font-bold">Documento de Identificacion: </span>
-              <p>{cedula}</p>
-              <span className="font-bold">Nombre Paciente: </span>
-              <p>{records[0].Nombre}</p>
-            </div>
-
-            <div className="mx-0 w-full max-w-2xl rounded-sm border border-gray-200 bg-white shadow-lg">
+            {/* aqui es la tabla a copia */}
+            {/* <div className="mx-0 w-full max-w-2xl rounded-sm border border-gray-200 bg-white shadow-lg">
               <header className="border-b border-gray-100 px-5 py-4">
                 <div className="font-semibold text-gray-800">
                   Resultados Laboratorio
@@ -317,12 +350,11 @@ const App = () => {
                   Generar PDF
                 </button>
               </div>
-            </div>*/}
+            </div> */}
           </>
         )}
       </div>
     </div>
   );
 };
-
 export default App;
