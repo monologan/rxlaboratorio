@@ -75,9 +75,14 @@ const App = () => {
           ? selectedRecords
           : records.map((_, index) => index);
 
+      // Use different endpoint based on active tab
+      const endpoint = activeTab === "rx"
+        ? `http://localhost:8000/api/rx-pdf/${cedula}`
+        : `http://localhost:8000/api/pdf/${cedula}`;
+
       const response = await axios({
         method: "post",
-        url: `http://localhost:8000/api/pdf/${cedula}`,
+        url: endpoint,
         data: { selectedIndices: recordsToDownload },
         responseType: "blob",
         headers: {
@@ -89,7 +94,7 @@ const App = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `reporte_${cedula}.pdf`);
+      link.setAttribute("download", `reporte_${activeTab}_${cedula}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();
