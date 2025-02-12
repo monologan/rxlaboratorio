@@ -4,10 +4,11 @@ import React, { useState } from "react";
 import axios from "axios";
 import { saveAs } from "file-saver";
 import Image from "next/image";
-import { BeakerIcon } from "@heroicons/react/24/solid";
+import { BeakerIcon, DocumentArrowDownIcon } from "@heroicons/react/24/solid";
 import { BoltIcon } from "@heroicons/react/24/solid";
 import { CircleStackIcon } from "@heroicons/react/24/solid";
 import { SignalIcon } from "@heroicons/react/24/solid";
+
 
 const App = () => {
   const [cedula, setCedula] = useState("");
@@ -67,14 +68,10 @@ const App = () => {
     }
   };
 
-  const handleGeneratePDF = async () => {
+  const handleGeneratePDF = async (index) => {
     try {
       setLoading(true);
-      const recordsToDownload =
-        selectedRecords.length > 0
-          ? selectedRecords
-          : records.map((_, index) => index);
-
+      
       // Use different endpoint based on active tab
       const endpoint = activeTab === "rx"
         ? `http://localhost:8000/api/rx-pdf/${cedula}`
@@ -83,7 +80,7 @@ const App = () => {
       const response = await axios({
         method: "post",
         url: endpoint,
-        data: { selectedIndices: recordsToDownload },
+        data: { selectedIndices: [index] }, // Send only the selected index
         responseType: "blob",
         headers: {
           "Content-Type": "application/json"
@@ -94,7 +91,7 @@ const App = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `reporte_${activeTab}_${cedula}.pdf`);
+      link.setAttribute("download", `reporte_${activeTab}_${cedula}_${index}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -211,9 +208,11 @@ const App = () => {
                         : "text-gray-500 hover:text-gray-700"
                     }`}
                     onClick={() => setActiveTab("laboratorios")}
-                  ><BoltIcon className="size-5"/>
-                    <span>Rayos X</span>
+                  >
+                    <BeakerIcon className="size-5" />
+                    <span>Laboratorios</span>
                   </button>
+
                   <button
                     className={`px-4 py-2 text-sm font-medium flex flex-row gap-2 ${
                       activeTab === "rx"
@@ -221,9 +220,9 @@ const App = () => {
                         : "text-gray-500 hover:text-gray-700"
                     }`}
                     onClick={() => setActiveTab("rx")}
-                  ><BeakerIcon className="size-5"/>
-                    <span>Laboratorios</span>
-
+                  >
+                    <BoltIcon className="size-5" />
+                    <span>RX</span>
                   </button>
                   <button
                     className={`px-4 py-2 text-sm font-medium flex flex-row gap-2 ${
@@ -232,7 +231,8 @@ const App = () => {
                         : "text-gray-500 hover:text-gray-700"
                     }`}
                     onClick={() => setActiveTab("mamografias")}
-                  ><CircleStackIcon className="size-5"/>
+                  >
+                    <CircleStackIcon className="size-5" />
                     <span>Mamografías</span>
                   </button>
                   <button
@@ -242,23 +242,54 @@ const App = () => {
                         : "text-gray-500 hover:text-gray-700"
                     }`}
                     onClick={() => setActiveTab("ecografias")}
-                  ><SignalIcon className="size-5"/>
+                  >
+                    <SignalIcon className="size-5" />
                     Ecografías
                   </button>
                 </nav>
               </div>
 
               <div className="p-4">
-                {activeTab === "laboratorios" && <div>este es RX</div>}
+                {activeTab === "laboratorios" && (
+                  <div className="overflow-x-auto">
+                    <table className="w-full table-auto">
+                      <thead className="bg-gray-50 text-md font-semibold uppercase text-gray-400">
+                        <tr>
+                          <th className="p-2 text-left">Fecha Examen</th>
+                          <th className="p-2 text-left">Nombre Examen</th>
+                          <th className="p-2 text-left">PDF</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100 text-sm">
+                        {records.map((record, index) => (
+                          <tr key={index}>
+                            <td className="p-2">{record.Fecha}</td>
+                            <td className="p-2">{record.NombreExamen}</td>
+                            <td className="p-2">
+                              <button
+                                onClick={() => handleGeneratePDF(index)}
+                                disabled={loading}
+                                className="text-red-500 hover:text-blue-700"
+                                title="Descargar PDF"
+                              >
+                                
+                                <DocumentArrowDownIcon className="size-7" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
                 {activeTab === "rx" && (
                   <div className="overflow-x-auto">
                     <table className="w-full table-auto">
-                      <thead className="bg-gray-50 text-md font-semibold uppercase text-gray-400 ">
+                      <thead className="bg-gray-50 text-md font-semibold uppercase text-gray-400">
                         <tr>
                           <th className="p-2 text-left">Fecha</th>
                           <th className="p-2 text-left">Nombre de Examen</th>
-                          
-                          <th className="p-2 text-left">✅</th>
+                          <th className="p-2 text-left">PDF</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100 text-sm">
@@ -266,22 +297,21 @@ const App = () => {
                           <tr key={index}>
                             <td className="p-2">{record.Fecha}</td>
                             <td className="p-2">{record.Descripcion}</td>
-                            
+                            <td className="p-2">
+                              <button
+                                onClick={() => handleGeneratePDF(index)}
+                                disabled={loading}
+                                className="text-blue-500 hover:text-blue-700"
+                                title="Descargar PDF"
+                              >
+                                📄
+                              </button>
+                            </td>
                           </tr>
                         ))}
-                        
-                        
                       </tbody>
                     </table>
-                    <div className="flex justify-end" >
-                    <button 
-                              onClick={handleGeneratePDF}
-                              disabled={loading}
-                              className="w-sm mt-4 bg-green-500 text-white px-4 py-2 rounded"
-                            >
-                              Generar PDF
-                            </button>
-                  </div></div>
+                  </div>
                 )}
                 {activeTab === "mamografias" && <div>este es mamografias</div>}
                 {activeTab === "ecografias" && <div>este es ecografias</div>}
