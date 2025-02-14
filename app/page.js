@@ -4,11 +4,13 @@ import React, { useState } from "react";
 import axios from "axios";
 import { saveAs } from "file-saver";
 import Image from "next/image";
-import { BeakerIcon, DocumentArrowDownIcon } from "@heroicons/react/24/solid";
-import { BoltIcon } from "@heroicons/react/24/solid";
-import { CircleStackIcon } from "@heroicons/react/24/solid";
-import { SignalIcon } from "@heroicons/react/24/solid";
-
+import {
+  BeakerIcon,
+  DocumentArrowDownIcon,
+  BoltIcon,
+  CircleStackIcon,
+  SignalIcon
+} from "@heroicons/react/24/solid";
 
 const App = () => {
   const [cedula, setCedula] = useState("");
@@ -71,11 +73,12 @@ const App = () => {
   const handleGeneratePDF = async (index) => {
     try {
       setLoading(true);
-      
+
       // Use different endpoint based on active tab
-      const endpoint = activeTab === "rx"
-        ? `http://localhost:8000/api/rx-pdf/${cedula}`
-        : `http://localhost:8000/api/pdf/${cedula}`;
+      const endpoint =
+        activeTab === "laboratorios"
+          ? `http://localhost:8000/api/pdf/${cedula}`
+          : `http://localhost:8000/api/rx-pdf/${cedula}`;
 
       const response = await axios({
         method: "post",
@@ -91,7 +94,10 @@ const App = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `reporte_${activeTab}_${cedula}_${index}.pdf`);
+      link.setAttribute(
+        "download",
+        `reporte_${activeTab}_${cedula}_${index}.pdf`
+      );
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -146,7 +152,7 @@ const App = () => {
           <select
             value={tipocodigo}
             onChange={(e) => setTipocodigo(e.target.value)}
-            className="p-2 border rounded w-14 bg-white"
+            className="p-2 border rounded w-15 bg-white"
           >
             <option value="">Tipo</option>
             <option value="CC">CC</option>
@@ -213,6 +219,7 @@ const App = () => {
                     <span>Laboratorios</span>
                   </button>
 
+
                   <button
                     className={`px-4 py-2 text-sm font-medium flex flex-row gap-2 ${
                       activeTab === "rx"
@@ -224,6 +231,8 @@ const App = () => {
                     <BoltIcon className="size-5" />
                     <span>RX</span>
                   </button>
+
+
                   <button
                     className={`px-4 py-2 text-sm font-medium flex flex-row gap-2 ${
                       activeTab === "mamografias"
@@ -235,6 +244,8 @@ const App = () => {
                     <CircleStackIcon className="size-5" />
                     <span>Mamografías</span>
                   </button>
+
+
                   <button
                     className={`px-4 py-2 text-sm font-medium flex flex-row gap-2 ${
                       activeTab === "ecografias"
@@ -246,6 +257,8 @@ const App = () => {
                     <SignalIcon className="size-5" />
                     Ecografías
                   </button>
+
+
                 </nav>
               </div>
 
@@ -254,7 +267,7 @@ const App = () => {
                   <div className="overflow-x-auto">
                     <table className="w-full table-auto">
                       <thead className="bg-gray-50 text-md font-semibold uppercase text-gray-400">
-                        <tr>
+                        <tr className="text-cyan-500 ">
                           <th className="p-2 text-left">Fecha Examen</th>
                           <th className="p-2 text-left">Nombre Examen</th>
                           <th className="p-2 text-left">PDF</th>
@@ -272,7 +285,6 @@ const App = () => {
                                 className="text-red-500 hover:text-blue-700"
                                 title="Descargar PDF"
                               >
-                                
                                 <DocumentArrowDownIcon className="size-7" />
                               </button>
                             </td>
