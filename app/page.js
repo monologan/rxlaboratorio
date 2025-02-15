@@ -17,8 +17,7 @@ const App = () => {
   const [tipocodigo, setTipocodigo] = useState("");
   const [records, setRecords] = useState([]);  
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [selectedRecords, setSelectedRecords] = useState([]);
+  const [error, setError] = useState(null);  
   const [activeTab, setActiveTab] = useState("laboratorios");
 
   const formatYear = (input) => {
@@ -92,15 +91,7 @@ const App = () => {
       setLoading(false);
     }
   };
-  const handleCheckboxChange = (index) => {
-    setSelectedRecords((prev) => {
-      if (prev.includes(index)) {
-        return prev.filter((i) => i !== index);
-      } else {
-        return [...prev, index];
-      }
-    });
-  };
+  
 
   return (
     <div className="container h-full mx-auto p-5  bg-fondo-blue grid grid-cols-2 gap-5 ">
