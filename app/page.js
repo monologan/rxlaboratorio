@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import axios from "axios";
 import { saveAs } from "file-saver";
@@ -16,8 +15,7 @@ const App = () => {
   const [cedula, setCedula] = useState("");
   const [fechanacimiento, setfechanacimiento] = useState("");
   const [tipocodigo, setTipocodigo] = useState("");
-  const [records, setRecords] = useState([]);
-  const [rxRecords, setRxRecords] = useState([]);
+  const [records, setRecords] = useState([]);  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedRecords, setSelectedRecords] = useState([]);
@@ -29,12 +27,10 @@ const App = () => {
     // Only keep up to 4 digits
     return cleaned.slice(0, 4);
   };
-
   const handleDateChange = (e) => {
     const formatted = formatYear(e.target.value);
     setfechanacimiento(formatted);
   };
-
   const handleSearch = async () => {
     try {
       setLoading(true);
@@ -49,19 +45,7 @@ const App = () => {
         }
       });
       setRecords(labResponse.data.data);
-
-      // Fetch RX records
-      const rxResponse = await axios.get(
-        `http://localhost:8000/api/rx-records`,
-        {
-          params: {
-            cedula: cedula || undefined,
-            fechanacimiento: fechanacimiento || undefined,
-            tipocodigo: tipocodigo || undefined
-          }
-        }
-      );
-      setRxRecords(rxResponse.data.data);
+      
     } catch (err) {
       setError("Error al buscar los registros");
       console.error(err);
@@ -69,7 +53,6 @@ const App = () => {
       setLoading(false);
     }
   };
-
   const handleGeneratePDF = async (index) => {
     try {
       setLoading(true);
@@ -78,7 +61,7 @@ const App = () => {
       const endpoint =
         activeTab === "laboratorios"
           ? `http://localhost:8000/api/pdf/${cedula}`
-          : `http://localhost:8000/api/rx-pdf/${cedula}`;
+          : `http://localhost:8000/api/RX-pdf/${cedula}`;
 
       const response = await axios({
         method: "post",
@@ -109,7 +92,6 @@ const App = () => {
       setLoading(false);
     }
   };
-
   const handleCheckboxChange = (index) => {
     setSelectedRecords((prev) => {
       if (prev.includes(index)) {
@@ -208,11 +190,10 @@ const App = () => {
               <div className="border-b border-gray-200 ">
                 <nav className="flex justify-between" aria-label="Tabs">
                   <button
-                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
-                      activeTab === "laboratorios"
+                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${activeTab === "laboratorios"
                         ? "border-b-2 border-blue-500 text-blue-600"
                         : "text-gray-500 hover:text-gray-700"
-                    }`}
+                      }`}
                     onClick={() => setActiveTab("laboratorios")}
                   >
                     <BeakerIcon className="size-5" />
@@ -221,11 +202,10 @@ const App = () => {
 
 
                   <button
-                    className={`px-4 py-2 text-sm font-medium flex flex-row gap-2 ${
-                      activeTab === "rx"
+                    className={`px-4 py-2 text-sm font-medium flex flex-row gap-2 ${activeTab === "rx"
                         ? "border-b-2 border-blue-500 text-blue-600"
                         : "text-gray-500 hover:text-gray-700"
-                    }`}
+                      }`}
                     onClick={() => setActiveTab("rx")}
                   >
                     <BoltIcon className="size-5" />
@@ -234,11 +214,10 @@ const App = () => {
 
 
                   <button
-                    className={`px-4 py-2 text-sm font-medium flex flex-row gap-2 ${
-                      activeTab === "mamografias"
+                    className={`px-4 py-2 text-sm font-medium flex flex-row gap-2 ${activeTab === "mamografias"
                         ? "border-b-2 border-blue-500 text-blue-600"
                         : "text-gray-500 hover:text-gray-700"
-                    }`}
+                      }`}
                     onClick={() => setActiveTab("mamografias")}
                   >
                     <CircleStackIcon className="size-5" />
@@ -247,11 +226,10 @@ const App = () => {
 
 
                   <button
-                    className={`px-4 py-2 text-sm font-medium flex flex-row gap-2 ${
-                      activeTab === "ecografias"
+                    className={`px-4 py-2 text-sm font-medium flex flex-row gap-2 ${activeTab === "ecografias"
                         ? "border-b-2 border-blue-500 text-blue-600"
                         : "text-gray-500 hover:text-gray-700"
-                    }`}
+                      }`}
                     onClick={() => setActiveTab("ecografias")}
                   >
                     <SignalIcon className="size-5" />
@@ -294,110 +272,12 @@ const App = () => {
                     </table>
                   </div>
                 )}
-                {activeTab === "rx" && (
-                  <div className="overflow-x-auto">
-                    <table className="w-full table-auto">
-                      <thead className="bg-gray-50 text-md font-semibold uppercase text-gray-400">
-                        <tr>
-                          <th className="p-2 text-left">Fecha</th>
-                          <th className="p-2 text-left">Nombre de Examen</th>
-                          <th className="p-2 text-left">PDF</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100 text-sm">
-                        {rxRecords.map((record, index) => (
-                          <tr key={index}>
-                            <td className="p-2">{record.Fecha}</td>
-                            <td className="p-2">{record.Descripcion}</td>
-                            <td className="p-2">
-                              <button
-                                onClick={() => handleGeneratePDF(index)}
-                                disabled={loading}
-                                className="text-blue-500 hover:text-blue-700"
-                                title="Descargar PDF"
-                              >
-                                📄
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+                {activeTab === "rx" && <div>este es rx</div>}
                 {activeTab === "mamografias" && <div>este es mamografias</div>}
                 {activeTab === "ecografias" && <div>este es ecografias</div>}
               </div>
             </div>
-
-            {/* aqui es la tabla a copia */}
-            {/* <div className="mx-0 w-full max-w-2xl rounded-sm border border-gray-200 bg-white shadow-lg">
-              <header className="border-b border-gray-100 px-5 py-4">
-                <div className="font-semibold text-gray-800">
-                  Resultados Laboratorio
-                </div>
-              </header>
-
-              <div className="overflow-x-auto p-2">
-                <table className="w-full table-auto">
-                  <thead className="bg-gray-50  text-md font-semibold uppercase text-gray-400">
-                    <tr>
-                      {Object.keys(records[0])
-                        .slice(0, 3)
-                        .filter((key) => key !== "Nombre")
-                        .map((key) => (
-                          <th key={key} className="text-left font-semibold">
-                            {key}
-                          </th>
-                        ))}
-                      <th className="p-1">✅</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 text-sm">
-                    {records.map((record, index) => (
-                      <tr key={index}>
-                        {Object.entries(record)
-                          .reduce((acc, [key, value]) => {
-                            if (
-                              key === "nombreexamen" &&
-                              !acc.some(([k, v]) => k === key && v === value)
-                            ) {
-                              acc.push([key, value]);
-                            } else if (key !== "nombreexamen") {
-                              acc.push([key, value]);
-                            }
-                            return acc;
-                          }, [])
-                          .slice(0, 3)
-                          .filter(([key]) => key !== "Nombre")
-                          .map(([_, value], i) => (
-                            <td key={i} className="p-2">
-                              {value}
-                            </td>
-                          ))}
-                        <td className="p-2">
-                          <input
-                            type="checkbox"
-                            checked={selectedRecords.includes(index)}
-                            onChange={() => handleCheckboxChange(index)}
-                            className="h-4 w-4 p-2"
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="flex justify-end space-x-4 border-t border-gray-100 px-5 py-4 text-2xl font-bold">
-                <button
-                  onClick={handleGeneratePDF}
-                  disabled={loading}
-                  className="mt-4 bg-green-500 text-white px-4 py-2 rounded"
-                >
-                  Generar PDF
-                </button>
-              </div>
-            </div> */}
+            
           </>
         )}
       </div>
