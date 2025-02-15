@@ -182,7 +182,7 @@ const App = () => {
                 <nav className="flex justify-between" aria-label="Tabs">
                   <button
                     className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${activeTab === "laboratorios"
-                        ? " border-[#f9dbbd] font-extrabold text-3xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
+                        ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
                         : "text-gray-500 hover:text-gray-700"
                       }`}
                     onClick={() => setActiveTab("laboratorios")}
@@ -194,7 +194,7 @@ const App = () => {
 
                   <button
                     className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${activeTab === "rx"
-                        ? " border-[#f9dbbd] font-extrabold text-3xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
+                        ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
                         : "text-gray-500 hover:text-gray-700"
                       }`}
                     onClick={() => setActiveTab("rx")}
@@ -206,7 +206,7 @@ const App = () => {
 
                   <button
                     className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${activeTab === "mamografias"
-                        ? " border-[#f9dbbd] font-extrabold text-3xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
+                        ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
                         : "text-gray-500 hover:text-gray-700"
                       }`}
                     onClick={() => setActiveTab("mamografias")}
@@ -218,7 +218,7 @@ const App = () => {
 
                   <button
                     className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${activeTab === "ecografias"
-                        ? " border-[#f9dbbd] font-extrabold text-3xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
+                        ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
                         : "text-gray-500 hover:text-gray-700"
                       }`}
                     onClick={() => setActiveTab("ecografias")}
