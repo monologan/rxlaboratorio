@@ -145,212 +145,256 @@ const App = () => {
     }
   };
   return (
-    <div className="container h-full mx-auto p-5  bg-fondo-blue grid grid-cols-2 gap-5 ">
-      {/* Left column with logos */}
-      <div className="p-10 mx-0">
-        <Image
-          src="/loguito2.svg"
-          alt="Logo"
-          width={150}
-          height={87}
-          className="object-contain mx-8"
-          priority
-        />
-        <Image
-          src="/black-girl.png"
-          alt="Logo"
-          width={500}
-          height={700}
-          className="object-contain mx-[9rem] my-[2rem]"
-          priority
-        />
-      </div>
-
-      {/* Right column with form and results */}
-      <div className="flex flex-col items-start gap-5 mt-6">
-        <div>
-          <h1 className="text-5xl font-bold texto-blue">
-            Portal de Resultados
-          </h1>
+    <div className="flex flex-col min-h-screen">
+      <div className="container mx-auto p-1 bg-fondo-blue grid grid-cols-2 gap-5 flex-grow">
+        {/* Left column with logos */}
+        <div className="p-10 mx-0">
+          <Image
+            src="/loguito2.svg"
+            alt="Logo"
+            width={150}
+            height={87}
+            className="object-contain mx-8"
+            priority
+          />
+          <Image
+            src="/black-girl.png"
+            alt="Logo"
+            width={500}
+            height={700}
+            className="object-contain mx-[9rem] my-[2rem]"
+            priority
+          />
         </div>
-        {/* Form section */}
-        <div className="flex flex-wrap gap-2 w-[670px]">
-          <form onSubmit={handleSearch} className="flex flex-row gap-2">
-            {/* Form inputs remain unchanged */}
-            <select
-              required
-              value={tipocodigo}
-              onChange={(e) => setTipocodigo(e.target.value)}
-              className="p-2 border rounded w-15 bg-white"
-              title="Por favor seleccione un tipo de documento"
-            >
-              <option value="">Tipo</option>
-              <option value="CC">CC</option>
-              <option value="TI">TI</option>
-              <option value="PA">PA</option>
-            </select>
-            <input
-              required
-              type="text"
-              value={cedula}
-              onChange={(e) => {
-                const re = /^[0-9\b]+$/;
-                if (e.target.value === "" || re.test(e.target.value)) {
-                  setCedula(e.target.value);
-                }
-              }}
-              pattern="[0-9]*"
-              placeholder="ingrese su cedula"
-              className="p-2 border rounded w-64"
-              title="Por favor ingrese solo números"
-            />
-            <input
-              type="text"
-              value={fechanacimiento}
-              onChange={handleDateChange}
-              placeholder="AAAA"
-              maxLength="4"
-              className="p-2 border rounded w-32"
-              required
-              title="Por favor ingrese el año de nacimiento"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="ml-2 bg-blue-500 text-white px-4 py-2 rounded grow"
-            >
-              Buscar
-            </button>
-          </form>
-        </div>
-        <div>
-          <figure>
-            <Image
-              src="/logofinal.png"
-              alt="Logo"
-              width={500}
-              height={700}
-              className="object-contain"
-              priority
-            />
-          </figure>
-        </div>
-        {error && <div className="text-red-500 mb-4">{error}</div>}
-        {records.length > 0 && (
-          <>
-            <div className="w-[670px] border border-red-200 rounded-lg">
-              <div className="border-b border-gray-200 ">
-                <nav className="flex justify-between" aria-label="Tabs">
-                  {/* Tabs remain unchanged */}
-                  <button
-                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
-                      activeTab === "laboratorios"
-                        ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                    onClick={() => setActiveTab("laboratorios")}
-                  >
-                    <BeakerIcon className="size-6" />
-                    <span>Laboratorios</span>
-                  </button>
 
-                  <button
-                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
-                      activeTab === "rx"
-                        ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                    onClick={() => setActiveTab("rx")}
-                  >
-                    <BoltIcon className="size-6" />
-                    <span>RX</span>
-                  </button>
+        {/* Right column with form and results */}
+        <div className="flex flex-col items-start gap-5 mt-6">
+          <div>
+            <h1 className="text-5xl font-bold texto-blue">
+              Portal de Resultados
+            </h1>
+          </div>
+          {/* Form section */}
+          <div className="flex flex-wrap gap-2 w-[670px]">
+            <form onSubmit={handleSearch} className="flex flex-row gap-2">
+              {/* Form inputs remain unchanged */}
+              <select
+                required
+                value={tipocodigo}
+                onChange={(e) => setTipocodigo(e.target.value)}
+                className="p-2 border rounded w-15 bg-white"
+                title="Por favor seleccione un tipo de documento"
+              >
+                <option value="">Tipo</option>
+                <option value="CC">CC</option>
+                <option value="TI">TI</option>
+                <option value="PA">PA</option>
+              </select>
+              <input
+                required
+                type="text"
+                value={cedula}
+                onChange={(e) => {
+                  const re = /^[0-9\b]+$/;
+                  if (e.target.value === "" || re.test(e.target.value)) {
+                    setCedula(e.target.value);
+                  }
+                }}
+                pattern="[0-9]*"
+                placeholder="ingrese su cedula"
+                className="p-2 border rounded w-64"
+                title="Por favor ingrese solo números"
+              />
+              <input
+                type="text"
+                value={fechanacimiento}
+                onChange={handleDateChange}
+                placeholder="AAAA"
+                maxLength="4"
+                className="p-2 border rounded w-32"
+                required
+                title="Por favor ingrese el año de nacimiento"
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="ml-2 bg-blue-500 text-white px-4 py-2 rounded grow"
+              >
+                Buscar
+              </button>
+            </form>
+          </div>
+          <div>
+            <figure>
+              <Image
+                src="/logofinal.png"
+                alt="Logo"
+                width={500}
+                height={700}
+                className="object-contain"
+                priority
+              />
+            </figure>
+          </div>
+          {error && <div className="text-red-500 mb-4">{error}</div>}
+          {records.length > 0 && (
+            <>
+              <div className="w-[670px] border border-red-200 rounded-lg">
+                <div className="border-b border-gray-200 ">
+                  <nav className="flex justify-between" aria-label="Tabs">
+                    {/* Tabs remain unchanged */}
+                    <button
+                      className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
+                        activeTab === "laboratorios"
+                          ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
+                          : "text-gray-500 hover:text-gray-700"
+                      }`}
+                      onClick={() => setActiveTab("laboratorios")}
+                    >
+                      <BeakerIcon className="size-6" />
+                      <span>Laboratorios</span>
+                    </button>
 
-                  <button
-                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
-                      activeTab === "mamografias"
-                        ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                    onClick={() => setActiveTab("mamografias")}
-                  >
-                    <CircleStackIcon className="size-6" />
-                    <span>Mamografías</span>
-                  </button>
+                    <button
+                      className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
+                        activeTab === "rx"
+                          ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
+                          : "text-gray-500 hover:text-gray-700"
+                      }`}
+                      onClick={() => setActiveTab("rx")}
+                    >
+                      <BoltIcon className="size-6" />
+                      <span>RX</span>
+                    </button>
 
-                  <button
-                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
-                      activeTab === "ecografias"
-                        ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                    onClick={() => setActiveTab("ecografias")}
-                  >
-                    <SignalIcon className="size-8" />
-                    Ecografías
-                  </button>
-                </nav>
+                    <button
+                      className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
+                        activeTab === "mamografias"
+                          ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
+                          : "text-gray-500 hover:text-gray-700"
+                      }`}
+                      onClick={() => setActiveTab("mamografias")}
+                    >
+                      <CircleStackIcon className="size-6" />
+                      <span>Mamografías</span>
+                    </button>
+
+                    <button
+                      className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
+                        activeTab === "ecografias"
+                          ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
+                          : "text-gray-500 hover:text-gray-700"
+                      }`}
+                      onClick={() => setActiveTab("ecografias")}
+                    >
+                      <SignalIcon className="size-8" />
+                      Ecografías
+                    </button>
+                  </nav>
+                </div>
+                <div className="p-4">
+                  {activeTab === "laboratorios" && (
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              Fecha
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              Examen
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              Acciones
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-cyan-100 divide-y divide-gray-200">
+                          {Object.keys(groupedExams).flatMap((examName) =>
+                            Object.entries(
+                              groupedExams[examName].reduce(
+                                (dateGroups, record) => {
+                                  const date = record.Fecha;
+                                  if (!dateGroups[date]) {
+                                    dateGroups[date] = [];
+                                  }
+                                  dateGroups[date].push(record);
+                                  return dateGroups;
+                                },
+                                {}
+                              )
+                            ).map(([date, dateRecords]) => (
+                              <tr
+                                key={`${examName}-${date}`}
+                                className="hover:bg-gray-50"
+                              >
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  {date}
+                                </td>
+                                <td className="px-6 py-4 wrap text-xs text-gray-900">
+                                  {examName}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                  <button
+                                    onClick={() =>
+                                      handleGeneratePDF(examName, date)
+                                    }
+                                    className="text-red-800 hover:text-blue-700 flex items-center gap-1"
+                                  >
+                                    <DocumentArrowDownIcon className="size-5" />
+                                    Descargar PDF
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {activeTab === "rx" && <div>este es rx</div>}
+                  {activeTab === "mamografias" && (
+                    <div>este es mamografias</div>
+                  )}
+                  {activeTab === "ecografias" && <div>este es ecografias</div>}
+                </div>
               </div>
-              <div className="p-4">
-                {activeTab === "laboratorios" && (
-                  <div className="overflow-x-auto">  
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th scope="col" className="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
-                            Fecha
-                          </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
-                            Examen
-                          </th>
-                          <th scope="col" className="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
-                            Acciones
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-cyan-100 divide-y divide-gray-200">
-                        {Object.keys(groupedExams).flatMap((examName) => 
-                          Object.entries(
-                            groupedExams[examName].reduce((dateGroups, record) => {
-                              const date = record.Fecha;
-                              if (!dateGroups[date]) {
-                                dateGroups[date] = [];
-                              }
-                              dateGroups[date].push(record);
-                              return dateGroups;
-                            }, {})
-                          ).map(([date, dateRecords]) => (
-                            <tr key={`${examName}-${date}`} className="hover:bg-gray-50">
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {date}
-                              </td>
-                              <td className="px-6 py-4 wrap text-xs text-gray-900">
-                                {examName}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button
-                                  onClick={() => handleGeneratePDF(examName, date)}
-                                  className="text-red-800 hover:text-blue-700 flex items-center gap-1"
-                                >
-                                  <DocumentArrowDownIcon className="size-5" />
-                                  Descargar PDF
-                                </button>
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-                
-                {activeTab === "rx" && <div>este es rx</div>}
-                {activeTab === "mamografias" && <div>este es mamografias</div>}
-                {activeTab === "ecografias" && <div>este es ecografias</div>}
-              </div>
+            </>
+          )}
+        </div>
+        
+        <footer footer className="w-[1500] ">          
+            <div className="flex items-end justify-evenly gap-2 mb-2 ">
+              <Image
+                src="/loguito2.svg"
+                alt="Logo Footer"
+                width={100}
+                height={58}
+                className="object-contain"
+                priority
+              />
+              
+            <p className="text-gray-500 text-sm text-center">
+              © {new Date().getFullYear()}
+              Hospital Ruben Cruz Velez. Todos los derechos reservados.
+            </p>
+            <p className="text-gray-400 text-xs mt-1">
+              Dirección: Calle 20 # 14 - 45, Tuluá - Valle del Cauca - Colombia
+              | Tel: +57(602) 231 7323
+            </p>
+          <span className="text-gray-400/60 text-xs mt-1">made with 💖 by Gerardo Valdes - Warcom S.A.</span>
             </div>
-          </>
-        )}{" "}
+        </footer>
       </div>
     </div>
   );
