@@ -20,7 +20,8 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("laboratorios");
-  const [translations, setTranslations] = useState(es); // Carga el archivo de traducción
+  const [translations, setTranslations] = useState(es);
+  // Carga el archivo de traducción
   // Add state to track grouped exams
   const [groupedExams, setGroupedExams] = useState({});
 
@@ -38,7 +39,10 @@ const App = () => {
         if (!acc[examName]) {
           acc[examName] = [];
         }
-        acc[examName].push({ ...record, index });
+        acc[examName].push({
+          ...record,
+          index
+        });
         return acc;
       }, {});
       setGroupedExams(grouped);
@@ -95,29 +99,29 @@ const App = () => {
   const handleGeneratePDF = async (examName, date = null) => {
     try {
       if (!groupedExams[examName] || groupedExams[examName].length === 0) {
-        console.error('No hay registros para este examen');
+        console.error("No hay registros para este examen");
         return;
       }
-      
+
       const params = new URLSearchParams({
         fechanacimiento,
         tipocodigo
       }).toString();
-  
+
       // Get indices for this exam name, optionally filtered by date
       const indices = groupedExams[examName]
-        .filter(record => !date || record.Fecha === date)
-        .map(record => record.index);
-  
+        .filter((record) => !date || record.Fecha === date)
+        .map((record) => record.index);
+
       if (indices.length === 0) {
-        console.error('No hay registros para esta fecha');
+        console.error("No hay registros para esta fecha");
         return;
       }
-  
+
       const response = await axios({
         method: "post",
         url: `${API_URL}/api/pdf/${cedula}?${params}`,
-        data: { 
+        data: {
           selectedIndices: indices
         },
         responseType: "blob",
@@ -125,17 +129,19 @@ const App = () => {
           "Content-Type": "application/json"
         }
       });
-  
+
       const blob = new Blob([response.data], { type: "application/pdf" });
-      const filename = date 
-        ? `reporte_laboratorio_${cedula}_${examName}_${date.replace(/\//g, '-')}.pdf`
+      const filename = date
+        ? `reporte_laboratorio_${cedula}_${examName}_${date.replace(
+            /\//g,
+            "-"
+          )}.pdf`
         : `reporte_laboratorio_${cedula}_${examName}.pdf`;
-      
+
       saveAs(blob, filename);
-      console.log('PDF descargado exitosamente');
-      
+      console.log("PDF descargado exitosamente");
     } catch (err) {
-      console.error('Error en la descarga:', err);
+      console.error("Error en la descarga:", err);
     }
   };
   return (
@@ -167,7 +173,6 @@ const App = () => {
             Portal de Resultados
           </h1>
         </div>
-
         {/* Form section */}
         <div className="flex flex-wrap gap-2 w-[670px]">
           <form onSubmit={handleSearch} className="flex flex-row gap-2">
@@ -218,7 +223,6 @@ const App = () => {
             </button>
           </form>
         </div>
-
         <div>
           <figure>
             <Image
@@ -231,9 +235,7 @@ const App = () => {
             />
           </figure>
         </div>
-
         {error && <div className="text-red-500 mb-4">{error}</div>}
-
         {records.length > 0 && (
           <>
             <div className="w-[670px] border border-red-200 rounded-lg">
@@ -241,10 +243,11 @@ const App = () => {
                 <nav className="flex justify-between" aria-label="Tabs">
                   {/* Tabs remain unchanged */}
                   <button
-                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${activeTab === "laboratorios"
+                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
+                      activeTab === "laboratorios"
                         ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
                         : "text-gray-500 hover:text-gray-700"
-                      }`}
+                    }`}
                     onClick={() => setActiveTab("laboratorios")}
                   >
                     <BeakerIcon className="size-6" />
@@ -252,10 +255,11 @@ const App = () => {
                   </button>
 
                   <button
-                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${activeTab === "rx"
+                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
+                      activeTab === "rx"
                         ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
                         : "text-gray-500 hover:text-gray-700"
-                      }`}
+                    }`}
                     onClick={() => setActiveTab("rx")}
                   >
                     <BoltIcon className="size-6" />
@@ -263,10 +267,11 @@ const App = () => {
                   </button>
 
                   <button
-                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${activeTab === "mamografias"
+                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
+                      activeTab === "mamografias"
                         ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
                         : "text-gray-500 hover:text-gray-700"
-                      }`}
+                    }`}
                     onClick={() => setActiveTab("mamografias")}
                   >
                     <CircleStackIcon className="size-6" />
@@ -274,10 +279,11 @@ const App = () => {
                   </button>
 
                   <button
-                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${activeTab === "ecografias"
+                    className={`px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
+                      activeTab === "ecografias"
                         ? " border-[#f9dbbd] font-extrabold text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
                         : "text-gray-500 hover:text-gray-700"
-                      }`}
+                    }`}
                     onClick={() => setActiveTab("ecografias")}
                   >
                     <SignalIcon className="size-8" />
@@ -285,63 +291,66 @@ const App = () => {
                   </button>
                 </nav>
               </div>
-
               <div className="p-4">
                 {activeTab === "laboratorios" && (
-                  
-                  <div className="overflow-x-auto">
-                  
-                    {/* Modified to group by exam name */}
-                    
-                    {Object.keys(groupedExams).map((examName) => (
-                      <div key={examName} className="mb-6 border-b pb-4">  
-                      <table className="w-full table-auto">
-                          <thead className="bg-gray-50 text-md font-semibold uppercase text-gray-400">
-                            <tr className="text-cyan-500">
-                              <th className="p-2 text-left">Fecha Examen</th>
-                              <th className="p-2 text-left">Examen</th>
-                              <th className="p-2 text-left">Acciones</th>
+                  <div className="overflow-x-auto">  
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th scope="col" className="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
+                            Fecha
+                          </th>
+                          <th scope="col" className="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
+                            Examen
+                          </th>
+                          <th scope="col" className="px-6 py-3 text-left text-xl font-medium text-gray-500 uppercase tracking-wider">
+                            Acciones
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-cyan-100 divide-y divide-gray-200">
+                        {Object.keys(groupedExams).flatMap((examName) => 
+                          Object.entries(
+                            groupedExams[examName].reduce((dateGroups, record) => {
+                              const date = record.Fecha;
+                              if (!dateGroups[date]) {
+                                dateGroups[date] = [];
+                              }
+                              dateGroups[date].push(record);
+                              return dateGroups;
+                            }, {})
+                          ).map(([date, dateRecords]) => (
+                            <tr key={`${examName}-${date}`} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {date}
+                              </td>
+                              <td className="px-6 py-4 wrap text-xs text-gray-900">
+                                {examName}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button
+                                  onClick={() => handleGeneratePDF(examName, date)}
+                                  className="text-red-800 hover:text-blue-700 flex items-center gap-1"
+                                >
+                                  <DocumentArrowDownIcon className="size-5" />
+                                  Descargar PDF
+                                </button>
+                              </td>
                             </tr>
-                          </thead>
-                          <tbody className="divide-y divide-gray-100 text-sm">
-                            {/* Group records by date within each exam name */}
-                            {Object.entries(
-                              groupedExams[examName].reduce((dateGroups, record) => {
-                                const date = record.Fecha;
-                                if (!dateGroups[date]) {
-                                  dateGroups[date] = [];
-                                }
-                                dateGroups[date].push(record);
-                                return dateGroups;
-                              }, {})
-                            ).map(([date, dateRecords]) => (
-                              <tr key={date} className="hover:bg-gray-50">
-                                <td className="p-2 font-medium">{date}</td>
-                                <td className="p-2 font-medium">{examName}</td>
-                                <td className="p-2">
-                                  <button
-                                    onClick={() => handleGeneratePDF(examName, date)}
-                                    className="text-red-800 hover:text-blue-700 flex items-center gap-1"
-                                  >
-                                    <DocumentArrowDownIcon className="size-6" />
-                                    Descargar PDF
-                                  </button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    ))}
+                          ))
+                        )}
+                      </tbody>
+                    </table>
                   </div>
                 )}
+                
                 {activeTab === "rx" && <div>este es rx</div>}
                 {activeTab === "mamografias" && <div>este es mamografias</div>}
                 {activeTab === "ecografias" && <div>este es ecografias</div>}
               </div>
             </div>
           </>
-        )}
+        )}{" "}
       </div>
     </div>
   );
