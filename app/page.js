@@ -12,7 +12,7 @@ import {
   SignalIcon
 } from "@heroicons/react/24/solid";
 
-const API_URL = "http://localhost:8000";
+const API_URL = "http://192.168.42.247:8000";
 const App = () => {
   const [cedula, setCedula] = useState("");
   const [fechanacimiento, setfechanacimiento] = useState("");
@@ -177,7 +177,10 @@ const App = () => {
           </div>
           {/* Form section */}
           <div className="flex flex-wrap gap-2 w-full md:w-[670px]">
-            <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-2 w-full">
+            <form
+              
+              className="flex flex-col md:flex-row gap-2 w-full"
+            > 
               <select
                 required
                 value={tipocodigo}
@@ -216,11 +219,25 @@ const App = () => {
                 title="Por favor ingrese el año de nacimiento"
               />
               <button
-                type="submit"
+                type="button"
                 disabled={loading}
-                className="w-full md:w-auto ml-0 md:ml-2 bg-blue-500 text-white px-4 py-2 rounded"
+                className="w-full md:w-auto ml-0 md:ml-2 bg-blue-500 text-white px-4 py-2 rounded touch-manipulation min-h-[44px] active:bg-blue-600 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                onClick={(e) => {
+                  // Prevent default behavior
+                  e.preventDefault();
+                  // Stop event propagation
+                  e.stopPropagation();
+                  // Add a small delay to ensure the event is fully processed
+                  setTimeout(() => {
+                    handleSearch(e);
+                  }, 10);
+                }}
+                onTouchStart={(e) => {
+                  // Prevent default touch behavior
+                  e.preventDefault();
+                }}
               >
-                Buscar
+                {loading ? "Buscando..." : "Buscar"}
               </button>
             </form>
           </div>
