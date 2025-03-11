@@ -11,6 +11,7 @@ import {
   CircleStackIcon,
   SignalIcon
 } from "@heroicons/react/24/solid";
+
 const API_URL = "http://localhost:8000";
 const App = () => {
   const [cedula, setCedula] = useState("");
@@ -373,7 +374,7 @@ const App = () => {
           )}
         </div>
         
-        <footer footer className="w-[1500] ">          
+        <footer className="w-[1500] ">          
             <div className="flex items-end justify-evenly gap-2 mb-2 ">
               <Image
                 src="/loguito2.svg"
