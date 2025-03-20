@@ -12,7 +12,7 @@ import {
   SignalIcon
 } from "@heroicons/react/24/solid";
 
-const API_URL = "http://192.168.42.247:8000";
+const API_URL = "http://localhost:8000";
 const App = () => {
   const [cedula, setCedula] = useState("");
   const [fechanacimiento, setfechanacimiento] = useState("");
@@ -93,6 +93,7 @@ const App = () => {
       setError("Error al buscar los registros");
       console.error(err);
     } finally {
+      // Ensure loading state is reset even if there's an error
       setLoading(false);
     }
   };
@@ -147,15 +148,15 @@ const App = () => {
   };
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="container mx-auto p-1 bg-fondo-blue grid grid-cols-1 md:grid-cols-2 gap-5 flex-grow">
+      <div className="container mx-auto p-1 bg-fondo-blue grid grid-cols-1 lg:grid-cols-2 gap-5 flex-grow max-w-[1366px]">
         {/* Left column with logos */}
-        <div className="p-4 md:p-10 mx-0">
+        <div className="p-4 lg:p-8 mx-0">
           <Image
             src="/loguito2.svg"
             alt="Logo"
             width={150}
             height={87}
-            className="object-contain mx-auto md:mx-8"
+            className="object-contain mx-auto lg:mx-8 w-auto h-auto max-w-[120px] lg:max-w-[150px]"
             priority
           />
           <Image
@@ -163,24 +164,23 @@ const App = () => {
             alt="Logo"
             width={500}
             height={700}
-            className="hidden md:block object-contain mx-auto md:mx-[9rem] my-[2rem] max-w-full h-auto"
+            className="hidden lg:block object-contain mx-auto lg:mx-auto my-[2rem] max-w-full h-auto max-h-[500px]"
             priority
           />
         </div>
 
         {/* Right column with form and results */}
-        <div className="flex flex-col items-center md:items-start gap-5 mt-6 px-4 md:px-0">
+        <div className="flex flex-col items-center lg:items-start gap-5 mt-4 lg:mt-6 px-4 lg:px-8">
           <div>
-            <h1 className="text-3xl md:text-5xl font-bold texto-blue text-center md:text-left">
+            <h1 className="text-2xl lg:text-4xl xl:text-5xl font-bold texto-red-100 text-center lg:text-left">
               Portal de Resultados
             </h1>
           </div>
           {/* Form section */}
-          <div className="flex flex-wrap gap-2 w-full md:w-[670px]">
-            <form
+          <div className="flex flex-wrap gap-2 w-full max-w-[670px]">
+            <form className="flex flex-col lg:flex-row gap-2 w-full">
               
-              className="flex flex-col md:flex-row gap-2 w-full"
-            > 
+             
               <select
                 required
                 value={tipocodigo}
@@ -227,14 +227,15 @@ const App = () => {
                   e.preventDefault();
                   // Stop event propagation
                   e.stopPropagation();
-                  // Add a small delay to ensure the event is fully processed
-                  setTimeout(() => {
-                    handleSearch(e);
-                  }, 10);
-                }}
-                onTouchStart={(e) => {
-                  // Prevent default touch behavior
-                  e.preventDefault();
+                  
+                  // Check if all fields are filled before setting loading state
+                  if (!tipocodigo || !cedula || !fechanacimiento) {
+                    setError("Por favor, complete todos los campos.");
+                    return;
+                  }
+                  
+                  // Proceed with search
+                  handleSearch(e);
                 }}
               >
                 {loading ? "Buscando..." : "Buscar"}
@@ -256,13 +257,13 @@ const App = () => {
           {error && <div className="text-red-500 mb-4 text-center md:text-left">{error}</div>}
           {records.length > 0 && (
             <>
-              <div className="w-full md:w-[670px] border border-red-200 rounded-lg overflow-x-auto">
+              <div className="w-full lg:w-[600px] border border-red-200 rounded-lg">
                 <div className="border-b border-gray-200">
                   <nav className="flex flex-wrap md:flex-nowrap justify-between" aria-label="Tabs">
                     <button
                       className={`px-2 md:px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
                         activeTab === "laboratorios"
-                          ? " border-[#f9dbbd] font-extrabold text-2xl md:text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
+                          ? " border-[#f9dbbd] font-extrabold text-xl md:text-2xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
                           : "text-gray-500 hover:text-gray-700"
                       }`}
                       onClick={() => setActiveTab("laboratorios")}
@@ -274,7 +275,7 @@ const App = () => {
                     <button
                       className={`px-2 md:px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
                         activeTab === "rx"
-                          ? " border-[#f9dbbd] font-extrabold text-2xl md:text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
+                          ? " border-[#f9dbbd] font-extrabold text-xl md:text-2xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
                           : "text-gray-500 hover:text-gray-700"
                       }`}
                       onClick={() => setActiveTab("rx")}
@@ -286,7 +287,7 @@ const App = () => {
                     <button
                       className={`px-2 md:px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
                         activeTab === "mamografias"
-                          ? " border-[#f9dbbd] font-extrabold text-2xl md:text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
+                          ? " border-[#f9dbbd] font-extrabold text-xl md:text-2xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
                           : "text-gray-500 hover:text-gray-700"
                       }`}
                       onClick={() => setActiveTab("mamografias")}
@@ -298,7 +299,7 @@ const App = () => {
                     <button
                       className={`px-2 md:px-4 py-2 text-sm font-medium flex flex-row items-center gap-2 ${
                         activeTab === "ecografias"
-                          ? " border-[#f9dbbd] font-extrabold text-2xl md:text-4xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
+                          ? " border-[#f9dbbd] font-extrabold text-xl md:text-2xl text-[#b0c4b1] bg-[#4a5759]/70 rounded-lg"
                           : "text-gray-500 hover:text-gray-700"
                       }`}
                       onClick={() => setActiveTab("ecografias")}
@@ -308,60 +309,62 @@ const App = () => {
                     </button>
                   </nav>
                 </div>
-                <div className="p-4">
+                <div className="p-1 lg:p-2">
                   {activeTab === "laboratorios" && (
-                    <div className="overflow-x-auto w-full">
-                      <table className="min-w-full divide-y divide-gray-200 table-auto">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th scope="col" className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-base font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                              Fecha
-                            </th>
-                            <th scope="col" className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-base font-medium text-gray-500 uppercase tracking-wider">
-                              Examen
-                            </th>
-                            <th scope="col" className="px-2 md:px-6 py-2 md:py-3 text-left text-xs md:text-base font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                              Acciones
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-cyan-100 divide-y divide-gray-200">
-                          {Object.keys(groupedExams).flatMap((examName) =>
-                            Object.entries(
-                              groupedExams[examName].reduce(
-                                (dateGroups, record) => {
-                                  const date = record.Fecha;
-                                  if (!dateGroups[date]) {
-                                    dateGroups[date] = [];
-                                  }
-                                  dateGroups[date].push(record);
-                                  return dateGroups;
-                                },
-                                {}
-                              )
-                            ).map(([date, dateRecords]) => (
-                              <tr key={`${examName}-${date}`} className="hover:bg-gray-50">
-                                <td className="px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-gray-500 whitespace-nowrap">
-                                  {date}
-                                </td>
-                                <td className="px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-gray-900 break-words max-w-[150px] md:max-w-none">
-                                  {examName}
-                                </td>
-                                <td className="px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm font-medium whitespace-nowrap">
-                                  <button
-                                    onClick={() => handleGeneratePDF(examName, date)}
-                                    className="text-red-800 hover:text-blue-700 flex items-center gap-1 text-xs md:text-sm"
-                                  >
-                                    <DocumentArrowDownIcon className="size-4 md:size-5" />
-                                    <span className="hidden md:inline">Descargar PDF</span>
-                                    <span className="md:hidden">PDF</span>
-                                  </button>
-                                </td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
+                    <div className="overflow-x-auto shadow-md rounded-lg">
+                      <div className="inline-block min-w-full align-middle">
+                        <table className="min-w-full divide-y divide-gray-200 text-sm">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th scope="col" className="px-1 lg:px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[20%]">
+                                Fecha
+                              </th>
+                              <th scope="col" className="px-1 lg:px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[60%]">
+                                Examen
+                              </th>
+                              <th scope="col" className="px-1 lg:px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[20%]">
+                                Acciones
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-cyan-100 divide-y divide-gray-200">
+                            {Object.keys(groupedExams).flatMap((examName) =>
+                              Object.entries(
+                                groupedExams[examName].reduce(
+                                  (dateGroups, record) => {
+                                    const date = record.Fecha;
+                                    if (!dateGroups[date]) {
+                                      dateGroups[date] = [];
+                                    }
+                                    dateGroups[date].push(record);
+                                    return dateGroups;
+                                  },
+                                  {}
+                                )
+                              ).map(([date, dateRecords]) => (
+                                <tr key={`${examName}-${date}`} className="hover:bg-gray-50">
+                                  <td className="w-1/4 px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-gray-500 whitespace-nowrap">
+                                    {date}
+                                  </td>
+                                  <td className="w-2/4 px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-gray-900 break-words">
+                                    {examName}
+                                  </td>
+                                  <td className="w-1/4 px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm font-medium">
+                                    <button
+                                      onClick={() => handleGeneratePDF(examName, date)}
+                                      className="text-red-800 hover:text-blue-700 flex items-center gap-1 text-xs md:text-sm whitespace-nowrap"
+                                    >
+                                      <DocumentArrowDownIcon className="size-4 md:size-5" />
+                                      <span className="hidden md:inline">Descargar PDF</span>
+                                      <span className="md:hidden">PDF</span>
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
 
@@ -394,7 +397,7 @@ const App = () => {
             />
             <div className="text-center md:text-left">
               <p className="text-gray-500 text-sm">
-                © {new Date().getFullYear()}
+                © {new Date().getFullYear()} - 
                 Hospital Ruben Cruz Velez. Todos los derechos reservados.
               </p>
               <p className="text-gray-400 text-xs mt-1">
