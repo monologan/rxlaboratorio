@@ -76,9 +76,9 @@ const App = () => {
 
       const labResponse = await axios.get(`${API_URL}/api/records`, {
         params: {
-          cedula: cedula || undefined,
-          fechanacimiento: fechanacimiento || undefined,
-          tipocodigo: tipocodigo || undefined
+          cedula: cedula,
+          fechanacimiento: fechanacimiento,
+          tipocodigo: tipocodigo
         }
       });
 
@@ -368,7 +368,63 @@ const App = () => {
                     </div>
                   )}
 
-                  {activeTab === "rx" && <div>Estamos en construccion 👷🚧</div>}
+                  {activeTab === "rx" && (
+                    <div className="overflow-x-auto shadow-md rounded-lg">
+                      <div className="inline-block min-w-full align-middle">
+                        <table className="min-w-full divide-y divide-gray-200 text-sm">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th scope="col" className="px-1 lg:px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[20%]">
+                                Fecha
+                              </th>
+                              <th scope="col" className="px-1 lg:px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[60%]">
+                                Examen
+                              </th>
+                              <th scope="col" className="px-1 lg:px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[20%]">
+                                Acciones
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-cyan-100 divide-y divide-gray-200">
+                            {Object.keys(groupedExams).flatMap((examName) =>
+                              Object.entries(
+                                groupedExams[examName].reduce(
+                                  (dateGroups, record) => {
+                                    const date = record.Fecha;
+                                    if (!dateGroups[date]) {
+                                      dateGroups[date] = [];
+                                    }
+                                    dateGroups[date].push(record);
+                                    return dateGroups;
+                                  },
+                                  {}
+                                )
+                              ).map(([date, dateRecords]) => (
+                                <tr key={`${examName}-${date}`} className="hover:bg-gray-50">
+                                  <td className="w-1/4 px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-gray-500 whitespace-nowrap">
+                                    {date}
+                                  </td>
+                                  <td className="w-2/4 px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm text-gray-900 break-words">
+                                    {examName}
+                                  </td>
+                                  <td className="w-1/4 px-2 md:px-6 py-2 md:py-4 text-xs md:text-sm font-medium">
+                                    <button
+                                      onClick={() => handleGeneratePDF(examName, date)}
+                                      className="text-red-800 hover:text-blue-700 flex items-center gap-1 text-xs md:text-sm whitespace-nowrap"
+                                    >
+                                      <DocumentArrowDownIcon className="size-4 md:size-5" />
+                                      <span className="hidden md:inline">Descargar PDF</span>
+                                      <span className="md:hidden">PDF</span>
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    )}
                   {activeTab === "mamografias" && <div>Estamos en construccion 👷🚧</div>}
                   {activeTab === "ecografias" && <div>Estamos en construccion 👷🚧</div>}
                 </div>
